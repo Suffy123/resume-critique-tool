@@ -5,8 +5,13 @@ import fitz  # PyMuPDF
 st.set_page_config(page_title="AI Resume Critique Tool")
 
 client = openai.OpenAI(
-    api_key=st.secrets["OPENAI_API_KEY"] if "OPENAI_API_KEY" in st.secrets else "sk-..."
+    api_key=st.secrets["OPENAI_API_KEY"]
 )
+
+try:
+    client.models.list()
+except Exception as e:
+    st.error("🔴 OpenAI connection failed: " + str(e))
 
 st.title("🤖 AI Resume Critique Tool")
 st.markdown("Upload your resume (PDF) and let AI help you improve it!")
@@ -30,12 +35,12 @@ def get_resume_feedback(resume_text):
     {resume_text}
     """
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
 
-uploaded_file = st.file_uploader("Upload your resume (PDF)", type="pdf")
+uploaded_file = st.file_uploader("📄 Upload your resume (PDF only)", type="pdf")
 
 if uploaded_file:
     with st.spinner("Analyzing your resume..."):
@@ -45,7 +50,8 @@ if uploaded_file:
             st.subheader("📋 AI Feedback:")
             st.write(feedback)
         else:
-            st.error("Could not extract text from the uploaded PDF.")
+            st.error("❌ Could not extract text from the PDF. Try another file.")
+
 
 
 
