@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-import fitz 
+import fitz  # PyMuPDF
 
 st.set_page_config(page_title="AI Resume Critique Tool")
 
@@ -17,6 +17,7 @@ def extract_text_from_pdf(pdf_file):
     for page in doc:
         text += page.get_text()
     return text
+
 def get_resume_feedback(resume_text):
     prompt = f"""
     You are an expert career coach. Analyze the following resume and give improvement suggestions:
@@ -45,5 +46,7 @@ if uploaded_file:
             st.write(feedback)
         else:
             st.error("Could not extract text from the uploaded PDF.")
+
+
 
         
